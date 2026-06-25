@@ -173,8 +173,6 @@ npm run preview
 
 Potential enhancements for future versions:
 
-## 🎯 Future Improvements
-
 - 💾 Persist data using Local Storage
 - ☁️ Integrate with a backend (Node.js/FastAPI)
 - 🔐 User authentication

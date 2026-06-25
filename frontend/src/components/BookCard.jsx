@@ -26,7 +26,7 @@ const genreColors = {
 const BookCard = ({ book, onEdit, onDelete, onToggleFavorite }) => {
   const handleDelete = () => {
     if (window.confirm(`Are you sure you want to delete "${book.title}"?`)) {
-      onDelete(book.id);
+      onDelete(book._id);
     }
   };
 
@@ -43,7 +43,7 @@ const BookCard = ({ book, onEdit, onDelete, onToggleFavorite }) => {
 
       {/* Favorite / Pin toggle */}
       <button
-        onClick={() => onToggleFavorite(book.id)}
+        onClick={() => onToggleFavorite(book._id)}
         aria-label={book.isFavorite ? "Remove from favorites" : "Add to favorites"}
         aria-pressed={book.isFavorite}
         className={`absolute top-3 right-3 z-10 p-1.5 rounded-full transition-all duration-200 active:scale-90 focus:outline-none focus:ring-2 focus:ring-amber-400/50 ${book.isFavorite

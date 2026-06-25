@@ -35,27 +35,27 @@ const genreOptions = [
   "Adventure",
 ];
 
-const emptyForm = {
-  title: "",
-  author: "",
-  genre: "Fiction",
-  rating: "",
-  status: "Unread",
-  description: "",
-};
-
-const BookForm = ({ onAddBook, onUpdateBook, editingBook, onClose , duplicateError }) => {
-  const [formData, setFormData] = useState(emptyForm);
-  const [errors, setErrors] = useState({});
-
-  useEffect(() => {
-    if (editingBook) {
-      setFormData({ ...editingBook });
-    } else {
-      setFormData(emptyForm);
+const getInitialForm = (book) => book
+  ? {
+      title: book.title || "",
+      author: book.author || "",
+      genre: book.genre || "Fiction",
+      rating: book.rating ?? "",
+      status: book.status || "Unread",
+      description: book.description || "",
     }
-    setErrors({});
-  }, [editingBook]);
+  : {
+      title: "",
+      author: "",
+      genre: "Fiction",
+      rating: "",
+      status: "Unread",
+      description: "",
+    };
+
+const BookForm = ({ onAddBook, onUpdateBook, editingBook, onClose, duplicateError, isSubmitting = false }) => {
+  const [formData, setFormData] = useState(() => getInitialForm(editingBook));
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     const handleEsc = (e) => {
@@ -81,10 +81,28 @@ const BookForm = ({ onAddBook, onUpdateBook, editingBook, onClose , duplicateErr
 
     if (!formData.title.trim()) {
       newErrors.title = "Title is required.";
+    } else if (formData.title.trim().length < 2) {
+      newErrors.title = "Title must be at least 2 characters.";
+    } else if (formData.title.trim().length > 100) {
+      newErrors.title = "Title cannot exceed 100 characters.";
     }
 
     if (!formData.author.trim()) {
       newErrors.author = "Author is required.";
+    } else if (formData.author.trim().length < 2) {
+      newErrors.author = "Author must be at least 2 characters.";
+    } else if (formData.author.trim().length > 100) {
+      newErrors.author = "Author cannot exceed 100 characters.";
+    }
+
+    if (!formData.genre.trim()) {
+      newErrors.genre = "Genre is required.";
+    } else if (formData.genre.trim().length < 2) {
+      newErrors.genre = "Genre must be at least 2 characters.";
+    }
+
+    if (formData.description && formData.description.length > 1000) {
+      newErrors.description = "Description cannot exceed 1000 characters.";
     }
 
     const ratingNum = Number(formData.rating);
@@ -206,11 +224,14 @@ const BookForm = ({ onAddBook, onUpdateBook, editingBook, onClose , duplicateErr
                   <FiAlertCircle size={13} /> {errors.author}
                 </p>
               )}
-            </div>{duplicateError && (
-               <p className="flex items-center gap-1 text-xs text-rose-400 mt-1.5 animate-fade-in-up">
-               <FiAlertCircle size={13} />
-               {duplicateError}
-               </p>
+            </div>
+            {duplicateError && (
+               <div className="sm:col-span-2">
+                 <p className="flex items-center gap-1 text-xs text-rose-400 mt-1.5 animate-fade-in-up">
+                 <FiAlertCircle size={13} />
+                 {duplicateError}
+                 </p>
+               </div>
             )}
 
             {/* Genre */}
@@ -266,11 +287,14 @@ const BookForm = ({ onAddBook, onUpdateBook, editingBook, onClose , duplicateErr
                   </span>
                 )}
               </div>
-            </div>{errors.rating && (
-              <p className="flex items-center gap-1 text-xs text-rose-400 mt-1.5 animate-fade-in-up">
-              <FiAlertCircle size={13} />
-              {errors.rating}
-              </p>
+            </div>
+            {errors.rating && (
+              <div className="sm:col-span-2">
+                <p className="flex items-center gap-1 text-xs text-rose-400 mt-1.5 animate-fade-in-up">
+                <FiAlertCircle size={13} />
+                {errors.rating}
+                </p>
+              </div>
             )}
 
             {/* Status */}
@@ -283,7 +307,7 @@ const BookForm = ({ onAddBook, onUpdateBook, editingBook, onClose , duplicateErr
                 icon={FiCheckCircle}
                 value={formData.status}
                 onChange={(val) => setFormData((prev) => ({ ...prev, status: val }))}
-                options={["Unread", "Reading", "Completed"]}
+                options={["Read", "Unread"]}
               />
             </div>
           </div>
@@ -311,10 +335,11 @@ const BookForm = ({ onAddBook, onUpdateBook, editingBook, onClose , duplicateErr
           <div className="flex flex-wrap gap-3 pt-1 sm:pt-2">
             <button
               type="submit"
+              disabled={isSubmitting}
               className="flex items-center justify-center gap-2 bg-gradient-to-r from-amber-400 to-amber-500 text-slate-900 px-5 sm:px-6 py-2.5 rounded-xl font-semibold text-sm shadow-md shadow-amber-500/30 hover:shadow-lg hover:shadow-amber-500/40 hover:-translate-y-0.5 active:translate-y-0 active:from-amber-500 active:to-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-300 focus:ring-offset-2 focus:ring-offset-slate-900 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 w-full sm:w-auto"
             >
               <FiSave />
-              {editingBook ? "Update Book" : "Add Book"}
+              {isSubmitting ? "Saving..." : editingBook ? "Update Book" : "Add Book"}
             </button>
 
             <button
