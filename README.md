@@ -114,13 +114,7 @@ Make sure you have:
    cd backend
    npm install
    ```
-   Create a `.env` file in the `backend` directory:
-   ```env
-   PORT=5000
-   MONGODB_URI=mongodb://localhost:27017/athenium
-   NODE_ENV=development
-   CLIENT_URL=http://localhost:5173
-   ```
+
 
 3. **Configure Frontend Settings**
    Navigate to the frontend directory, install packages, and set up your `.env` file:
@@ -128,10 +122,7 @@ Make sure you have:
    cd ../frontend
    npm install
    ```
-   Create a `.env` file in the `frontend` directory:
-   ```env
-   VITE_API_URL=http://localhost:5000/api
-   ```
+
 
 ---
 
